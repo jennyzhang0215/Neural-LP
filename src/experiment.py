@@ -158,13 +158,14 @@ class Experiment():
             for i, (q, h, t) in enumerate(zip(qq, hh, tt)):
                 p_head = predictions_this_batch[i, h]
                 if self.option.adv_rank:
-                    eval_fn = lambda j, p: p >= p_head and (j != h)
+                    eval_fn = lambda l: l[1] >= p_head and (l[0] != h)
                 elif self.option.rand_break:
-                    eval_fn = lambda j, p: (p > p_head) or \
-                                           ((p == p_head) and (j != h) and (np.random.uniform() < 0.5))
+                    eval_fn = lambda l: (l[1] > p_head) or \
+                                        ((l[1] == p_head) and (l[0] != h) and (np.random.uniform() < 0.5))
                 else:
-                    eval_fn = lambda j, p: (p > p_head)
-                this_predictions = list(filter(eval_fn, enumerate(predictions_this_batch[i, :])))
+                    eval_fn = lambda l: (l[1] > p_head)
+                this_predictions = filter(eval_fn, enumerate(predictions_this_batch[i, :]))
+                this_predictions = list(this_predictions)
                 this_predictions = sorted(this_predictions, key=lambda x: x[1], reverse=True)
                 if self.option.query_is_language:
                     all_num_preds.append(len(this_predictions))
