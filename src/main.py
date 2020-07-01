@@ -2,7 +2,6 @@ import os
 import argparse
 import time
 import tensorflow as tf
-import numpy as np
 from model import Learner
 from data import Data, DataPlus
 from experiment import Experiment
@@ -75,7 +74,8 @@ def main():
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
        
     if not option.query_is_language:
-        data = Data(option.datadir, option.seed, option.type_check, option.domain_size, option.no_extra_facts)
+        data = Data(option.datadir, option.seed, option.type_check,
+                    option.domain_size, option.no_extra_facts)
     else:
         data = DataPlus(option.datadir, option.seed)
     print("Data prepared.")
@@ -102,7 +102,6 @@ def main():
     learner = Learner(option)
     print("Learner built.")
 
-    saver = tf.train.Saver(max_to_keep=option.max_epoch)
     saver = tf.train.Saver()
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = False

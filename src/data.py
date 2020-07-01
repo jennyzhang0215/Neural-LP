@@ -60,7 +60,7 @@ class Data(object):
         self.num_relation = len(self.relation_to_number)
         self.num_query = self.num_relation * 2
         self.num_entity = len(self.entity_to_number)
-                
+        
         self.test_file = os.path.join(folder, "test.txt")
         self.train_file = os.path.join(folder, "train.txt")
         self.valid_file = os.path.join(folder, "valid.txt")
