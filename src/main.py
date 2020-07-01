@@ -21,7 +21,7 @@ def main():
     parser = argparse.ArgumentParser(description="Experiment setup")
     # misc
     parser.add_argument('--seed', default=33, type=int)
-    parser.add_argument('--gpu', default="", type=str)
+    parser.add_argument('--gpu', default="0", type=str)
     parser.add_argument('--no_train', default=False, action="store_true")
     parser.add_argument('--from_model_ckpt', default=None, type=str)
     parser.add_argument('--no_rules', default=False, action="store_true")
