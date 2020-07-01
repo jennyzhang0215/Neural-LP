@@ -1,3 +1,9 @@
 *.pyc
 *.pckl
 datasets/*/all.txt
+.idea/*
+venv/*/*
+venv/*
+exps/*/ckpt/*
+exps/*/*
+.DS_Store
