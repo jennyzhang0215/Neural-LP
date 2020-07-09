@@ -60,7 +60,7 @@ class Data(object):
         self.num_relation = len(self.relation_to_number)
         self.num_query = self.num_relation * 2
         self.num_entity = len(self.entity_to_number)
-        
+
         self.test_file = os.path.join(folder, "test.txt")
         self.train_file = os.path.join(folder, "train.txt")
         self.valid_file = os.path.join(folder, "valid.txt")
@@ -212,7 +212,10 @@ class Data(object):
         return valid, new_train
 
     def _db_to_matrix_db(self, db):
-        matrix_db = {r: ([[0,0]], [0.], [self.num_entity, self.num_entity]) 
+        ## What is this matrix_bd for?
+        matrix_db = {r: ([[0,0]], # [head,tail]
+                         [0.], # value
+                         [self.num_entity, self.num_entity])
                      for r in range(self.num_relation)}
         for i, fact in enumerate(db):
             rel = fact[0]
@@ -311,8 +314,8 @@ class Data(object):
 
         if self.type_check:
             query = this_batch[0][0]
-            matrix_db = self._subset_of_matrix_db(matrix_db, 
-                                                  self.domains[query])
+            matrix_db = self._subset_of_matrix_db(matrix_db, self.domains[query])
+        ## queries, heads, tails，
         return self._triplet_to_feed(this_batch), matrix_db
 
     def next_valid(self):
@@ -331,9 +334,8 @@ class Data(object):
         return self._triplet_to_feed(this_batch), matrix_db
 
     def next_train(self):
-        self.train_start, this_batch, this_batch_id = self._next_batch(self.train_start,
-                                                        self.num_train,
-                                                        self.train)
+        self.train_start, this_batch, this_batch_id = \
+            self._next_batch(self.train_start, self.num_train, self.train)
         
         if self.share_db and self.use_extra_facts:
             extra_facts = [fact for i, fact in enumerate(self.train) if i not in this_batch_id]

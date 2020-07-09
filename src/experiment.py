@@ -2,7 +2,6 @@ import sys
 import os
 import time
 import pickle
-from collections import Counter
 import functools
 import numpy as np
 from utils import list_rules, print_rules
@@ -10,7 +9,7 @@ from utils import list_rules, print_rules
 
 class Experiment():
     """
-    This class handles all experiments related activties, 
+    This class handles all experiments related activities,
     including training, testing, early stop, and visualize
     results, such as get attentions and get rules. 
 
@@ -62,11 +61,7 @@ class Experiment():
                 run_fn = self.learner.update
             else:
                 run_fn = self.learner.predict
-            loss, in_top = run_fn(self.sess,
-                                  qq, 
-                                  hh, 
-                                  tt, 
-                                  mdb) 
+            loss, in_top = run_fn(self.sess, qq, hh, tt, mdb)
             epoch_loss += list(loss)
             epoch_in_top += list(in_top)
                                     
@@ -117,8 +112,7 @@ class Experiment():
             self.one_epoch_valid()
             self.one_epoch_test()
             self.epoch += 1
-            model_path = self.saver.save(self.sess, 
-                                         self.option.model_path,
+            model_path = self.saver.save(self.sess, self.option.model_path,
                                          global_step=self.epoch)
             print("Model saved at %s" % model_path)
             

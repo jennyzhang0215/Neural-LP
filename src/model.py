@@ -60,13 +60,11 @@ class Learner(object):
         self.tails = tf.placeholder(tf.int32, [None])
         self.heads = tf.placeholder(tf.int32, [None])
         self.targets = tf.one_hot(indices=self.heads, depth=self.num_entity)
-            
         if not self.query_is_language:
             self.queries = tf.placeholder(tf.int32, [None, self.num_step])
-            self.query_embedding_params = tf.Variable(self._random_uniform_unit(
-                                                          self.num_query + 1, # <END> token 
-                                                          self.query_embed_size), 
-                                                      dtype=tf.float32)
+            self.query_embedding_params = tf.Variable(
+                self._random_uniform_unit(self.num_query + 1, # <END> token
+                                          self.query_embed_size), dtype=tf.float32)
         
             rnn_inputs = tf.nn.embedding_lookup(self.query_embedding_params, 
                                                 self.queries)
@@ -82,7 +80,6 @@ class Learner(object):
 
         return rnn_inputs
 
-
     def _build_graph(self):
         """ Build a computation graph that represents the model """
         rnn_inputs = self._build_input()                        
@@ -93,38 +90,28 @@ class Learner(object):
                                              self.num_step, 
                                              axis=1)]
         
-        cell = tf.contrib.rnn.LSTMCell(self.rnn_state_size,
-                                                     state_is_tuple=True)
-        self.cell = tf.contrib.rnn.MultiRNNCell(
-                                                    [cell] * self.num_layer, 
-                                                    state_is_tuple=True)
+        cell = tf.contrib.rnn.LSTMCell(self.rnn_state_size, state_is_tuple=True)
+        self.cell = tf.contrib.rnn.MultiRNNCell([cell] * self.num_layer, state_is_tuple=True)
         init_state = self.cell.zero_state(tf.shape(self.tails)[0], tf.float32)
         
         # rnn_outputs: a list of num_step tensors,
         # each tensor of size (batch_size, rnn_state_size).
-        self.rnn_outputs, self.final_state = tf.contrib.rnn.static_rnn(
-                                                self.cell, 
-                                                self.rnn_inputs,
-                                                initial_state=init_state)
+        self.rnn_outputs, self.final_state = tf.contrib.rnn.static_rnn(self.cell,
+                                                                       self.rnn_inputs,
+                                                                       initial_state=init_state)
         
-        self.W = tf.Variable(np.random.randn(
-                                self.rnn_state_size, 
-                                self.num_operator), 
+        self.W = tf.Variable(np.random.randn(self.rnn_state_size, self.num_operator),
                             dtype=tf.float32)
-        self.b = tf.Variable(np.zeros(
-                                (1, self.num_operator)), 
+        self.b = tf.Variable(np.zeros((1, self.num_operator)),
                             dtype=tf.float32)
 
         # attention_operators: a list of num_step lists,
         # each inner list has num_operator tensors,
         # each tensor of size (batch_size, 1).
         # Each tensor represents the attention over an operator. 
-        self.attention_operators = [tf.split(
-                                    tf.nn.softmax(
-                                      tf.matmul(rnn_output, self.W) + self.b), 
-                                    self.num_operator, 
-                                    axis=1) 
-                                    for rnn_output in self.rnn_outputs]
+        self.attention_operators = [tf.split(tf.nn.softmax(tf.matmul(rnn_output, self.W) + self.b),
+                                             self.num_operator, axis=1)
+                                    for rnn_output in self.rnn_outputs] ## a_t
         
         # attention_memories: (will be) a list of num_step tensors,
         # each of size (batch_size, t+1),
@@ -135,52 +122,42 @@ class Learner(object):
         # memories: (will be) a tensor of size (batch_size, t+1, num_entity),
         # where t is the current step (zero indexed)
         # Then tensor represents currently populated memory cells.
-        self.memories = tf.expand_dims(
-                         tf.one_hot(
-                                indices=self.tails, 
-                                depth=self.num_entity), 1) 
-
-        self.database = {r: tf.sparse_placeholder(
-                            dtype=tf.float32, 
-                            name="database_%d" % r)
-                            for r in range(self.num_operator // 2)}
+        self.memories = tf.expand_dims(tf.one_hot(indices=self.tails,
+                                                  depth=self.num_entity), 1)
+        ## R matrices
+        self.database = {r: tf.sparse_placeholder(dtype=tf.float32, name="database_%d" % r)
+                         for r in range(self.num_operator // 2)}
         
         for t in range(self.num_step):
             self.attention_memories.append(
-                            tf.nn.softmax(
-                            tf.squeeze(
-                                tf.matmul(
-                                    tf.expand_dims(self.rnn_outputs[t], 1), 
-                                    tf.stack(self.rnn_outputs[0:t+1], axis=2)), 
-                            squeeze_dims=[1])))
-            
+                tf.nn.softmax(tf.squeeze(tf.matmul(tf.expand_dims(self.rnn_outputs[t], 1),
+                                                   tf.stack(self.rnn_outputs[0:t+1], axis=2)),
+                                         squeeze_dims=[1])))
             # memory_read: tensor of size (batch_size, num_entity)
-            memory_read = tf.squeeze(
-                            tf.matmul(
-                                tf.expand_dims(self.attention_memories[t], 1), 
-                                self.memories),
-                            squeeze_dims=[1])
+            memory_read = tf.squeeze(tf.matmul(tf.expand_dims(self.attention_memories[t], 1),
+                                               self.memories),
+                                     squeeze_dims=[1])
             
             if t < self.num_step - 1:
                 # database_results: (will be) a list of num_operator tensors,
                 # each of size (batch_size, num_entity).
-                database_results = []    
+                database_results = []
                 memory_read = tf.transpose(memory_read)
                 for r in range(self.num_operator // 2):
-                    for op_matrix, op_attn in zip(
-                                    [self.database[r], 
-                                     tf.sparse_transpose(self.database[r])],
-                                    [self.attention_operators[t][r], 
-                                     self.attention_operators[t][r+self.num_operator // 2]]):
+                    for op_matrix, op_attn in zip([self.database[r], tf.sparse_transpose(self.database[r])],
+                                                  [self.attention_operators[t][r],
+                                                   self.attention_operators[t][r+self.num_operator // 2]]):
                         product = tf.sparse_tensor_dense_matmul(op_matrix, memory_read)
                         database_results.append(tf.transpose(product) * op_attn)
 
                 added_database_results = tf.add_n(database_results)
                 if self.norm:
-                    added_database_results /= tf.maximum(self.thr, tf.reduce_sum(added_database_results, axis=1, keep_dims=True))                
-                
+                    added_database_results /= tf.maximum(self.thr,
+                                                         tf.reduce_sum(added_database_results,
+                                                                       axis=1, keep_dims=True))
                 if self.dropout > 0.:
-                  added_database_results = tf.nn.dropout(added_database_results, keep_prob=1.-self.dropout)
+                    added_database_results = tf.nn.dropout(added_database_results,
+                                                           keep_prob=1.-self.dropout)
 
                 # Populate a new cell in memory by concatenating.  
                 self.memories = tf.concat( 
@@ -193,10 +170,7 @@ class Learner(object):
         self.final_loss = - tf.reduce_sum(self.targets * tf.log(tf.maximum(self.predictions, self.thr)), 1)
         
         if not self.accuracy:
-            self.in_top = tf.nn.in_top_k(
-                            predictions=self.predictions, 
-                            targets=self.heads, 
-                            k=self.top_k)
+            self.in_top = tf.nn.in_top_k(predictions=self.predictions, targets=self.heads, k=self.top_k)
         else: 
             _, indices = tf.nn.top_k(self.predictions, self.top_k, sorted=False)
             self.in_top = tf.equal(tf.squeeze(indices), self.heads)
