@@ -11,8 +11,8 @@ def gen_dict(file_name):
 
 data_name = 'fb15k-237'
 test_file = os.path.join(data_name, 'test.txt')
-rel_file = os.path.join(data_name, 'relations.csv')
-entity_file = os.path.join(data_name, 'entities.csv')
+rel_file = os.path.join(data_name, 'relations.tsv')
+entity_file = os.path.join(data_name, 'entities.tsv')
 rel_dict = gen_dict(rel_file)
 entity_dict = gen_dict(entity_file)
 
