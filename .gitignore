@@ -7,3 +7,7 @@ venv/*
 exps/*/ckpt/*
 exps/*/*
 .DS_Store
+KGC/ckpts/*/*
+KGC/data/*/*
+KGC/data/FB15k-237.zip
+KGC/result.tsv

@@ -214,21 +214,22 @@ class Experiment():
         all_attention_memories = {}
 
         for queries in query_batches:
+            #attention_operators: [[(batch_size, 1)[ for _ in range(num_operator)] for _ in range(num_step)]
+            #attention_memories: [(batch_size, t+1) for t in range(num_step)]
             attention_operators, attention_memories \
-            = self.learner.get_attentions_given_queries(self.sess, queries)
+                = self.learner.get_attentions_given_queries(self.sess, queries)
             
             # Tuple-ize in order to be used as dict keys
             if self.option.query_is_language:
                 queries = [tuple(q) for q in queries]
 
             for i in range(len(queries)):
-                all_attention_operators[queries[i]] \
-                                        = [[attn[i] 
-                                        for attn in attn_step] 
-                                        for attn_step in attention_operators]
-                all_attention_memories[queries[i]] = \
-                                        [attn_step[i, :] 
-                                        for attn_step in attention_memories]
+                # all_attention_operator: [[a1,a2,..,aR], [a1,a2,..,aR], ...T+1]
+                # all_attention_memory: [(b1), (b1,b2), ...T]
+                all_attention_operators[queries[i]] = [[attn[i] for attn in attn_step]
+                                                       for attn_step in attention_operators]
+                all_attention_memories[queries[i]] = [attn_step[i, :]
+                                                      for attn_step in attention_memories]
         pickle.dump([all_attention_operators, all_attention_memories], 
                     open(os.path.join(self.option.this_expsdir, "attentions.pckl"), "wb"))
                
@@ -252,7 +253,9 @@ class Experiment():
             else: 
                 # Tuple-ize in order to be used as dict keys
                 q = tuple(q)
-            all_listed_rules[q] = list_rules(all_attention_operators[q], 
+            # each all_attention_operator: [[a1,a2,..,aR], [a1,a2,..,aR], ...T]
+            # each all_attention_memory: [(b1), (b1,b2), ...T+1]
+            all_listed_rules[q] = list_rules(all_attention_operators[q],
                                              all_attention_memories[q],
                                              self.option.rule_thr,)
             all_printed_rules += print_rules(q, 

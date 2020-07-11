@@ -96,8 +96,7 @@ class Learner(object):
         
         # rnn_outputs: a list of num_step tensors,
         # each tensor of size (batch_size, rnn_state_size).
-        self.rnn_outputs, self.final_state = tf.contrib.rnn.static_rnn(self.cell,
-                                                                       self.rnn_inputs,
+        self.rnn_outputs, self.final_state = tf.contrib.rnn.static_rnn(self.cell, self.rnn_inputs,
                                                                        initial_state=init_state)
         
         self.W = tf.Variable(np.random.randn(self.rnn_state_size, self.num_operator),
@@ -183,11 +182,10 @@ class Learner(object):
     def _run_graph(self, sess, qq, hh, tt, mdb, to_fetch):
         feed = {}
         if not self.query_is_language:
-            feed[self.queries] = [[q] * (self.num_step-1) + [self.num_query]
+            feed[self.queries] = [[q] * (self.num_step-1) + [self.num_query] # the <END> token is the last token
                                   for q in qq]
         else:
-            feed[self.queries] = [[q] * (self.num_step-1) 
-                                  + [[self.num_vocab] * self.num_word]
+            feed[self.queries] = [[q] * (self.num_step-1) + [[self.num_vocab] * self.num_word]
                                   for q in qq]
 
         feed[self.heads] = hh 
@@ -206,7 +204,7 @@ class Learner(object):
     def predict(self, sess, qq, hh, tt, mdb):
         to_fetch = [self.final_loss, self.in_top]
         fetched = self._run_graph(sess, qq, hh, tt, mdb, to_fetch)
-        return fetched[0], fetched[1]
+        return fetched[0], fetched[1] ## loss, topk
 
     def get_predictions_given_queries(self, sess, qq, hh, tt, mdb):
         to_fetch = [self.in_top, self.predictions]

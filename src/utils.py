@@ -20,24 +20,32 @@ def list_rules(attn_ops, attn_mems, the):
         rules is a list of operator ids. 
     
     """
-    
+    # each all_attention_operator: [[a0,a1,..,aR-1], [a0,a1,..,aR-1], ...T]
+    # each all_attention_memory: [(b0), (b0,b1), ...T+1]
     num_step = len(attn_ops)
     paths = {t+1: [] for t in range(num_step)}
     paths[0] = [([], 1.)]
     for t in range(num_step):
         for m, attn_mem in enumerate(attn_mems[t]):
-            for p, w in paths[m]:
-                paths[t+1].append((p, w * attn_mem))
+            for p, w in paths[m]: # this loop can generate rules with the length smaller than T
+                paths[t+1].append((p, w * attn_mem)) # paths[t+1] as a temporary path container
+        print('paths[{}]'.format(t+1), paths[t+1])
         if t < num_step - 1:
             new_paths = []           
             for o, attn_op in enumerate(attn_ops[t]):
                 for p, w in paths[t+1]:
                     if w * attn_op > the:
-                        new_paths.append((p + [o], w * attn_op))
+                        new_paths.append((p + [o], # must append the next relation [o] along a path
+                                          w * attn_op))
+                        print((p + [o], w * attn_op))
             paths[t+1] = new_paths
+        print('updated:', paths[t + 1], '\n\n')
     this_the = min([the], max([w for (_, w) in paths[num_step]]))
+    print('after filtering', the, this_the)
     final_paths = list(filter(lambda x: x[1] >= this_the, paths[num_step]))
     final_paths.sort(key=lambda x: x[1], reverse=True)
+    print(final_paths)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n")
     
     return final_paths
 

@@ -118,6 +118,7 @@ class Data(object):
                                     set(list(zip(*self.test))[0]) | \
                                     set(list(zip(*self._augment_with_reverse(self.train)))[0]) | \
                                     set(list(zip(*self._augment_with_reverse(self.test)))[0]))
+        print("query_for_rules", self.query_for_rules)
         self.parser = self._create_parser()
 
     def _create_parser(self):
@@ -275,9 +276,7 @@ class Data(object):
     def _augment_with_reverse(self, triplets):
         augmented = []
         for triplet in triplets:
-            augmented += [triplet, (triplet[0]+self.num_relation, 
-                                    triplet[2], 
-                                    triplet[1])]
+            augmented += [triplet, (triplet[0]+self.num_relation, triplet[2], triplet[1])]
         return augmented
 
     def _next_batch(self, start, size, samples):
@@ -304,9 +303,7 @@ class Data(object):
         return queries, heads, tails
 
     def next_test(self):
-        self.test_start, this_batch, _ = self._next_batch(self.test_start, 
-                                                       self.num_test, 
-                                                       self.test)
+        self.test_start, this_batch, _ = self._next_batch(self.test_start, self.num_test, self.test)
         if self.share_db and self.use_extra_facts:
             matrix_db = self.augmented_mdb_test
         else:
@@ -319,9 +316,7 @@ class Data(object):
         return self._triplet_to_feed(this_batch), matrix_db
 
     def next_valid(self):
-        self.valid_start, this_batch, _ = self._next_batch(self.valid_start, 
-                                                        self.num_valid,
-                                                        self.valid)
+        self.valid_start, this_batch, _ = self._next_batch(self.valid_start, self.num_valid, self.valid)
         if self.share_db and self.use_extra_facts:
             matrix_db = self.augmented_mdb_valid
         else:
