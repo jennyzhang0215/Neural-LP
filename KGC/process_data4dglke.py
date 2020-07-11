@@ -3,11 +3,9 @@ import json
 import os
 import pandas as pd
 
-data_name = 'family'
-
+data_name = 'fb15k-237'
 entities = pd.read_csv(os.path.join('..', 'datasets', data_name, 'entities.txt'), delimiter='\t')
 relations = pd.read_csv(os.path.join('..', 'datasets', data_name, 'relations.txt'), delimiter='\t')
-
 facts = pd.read_csv(os.path.join('..', 'datasets', data_name, 'facts.txt'), delimiter='\t')
 trains = pd.read_csv(os.path.join('..', 'datasets', data_name, 'train.txt'), delimiter='\t')
 valids = pd.read_csv(os.path.join('..', 'datasets', data_name, 'valid.txt'), delimiter='\t')
