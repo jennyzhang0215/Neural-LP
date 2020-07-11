@@ -16,8 +16,8 @@ entity_file = os.path.join(data_name, 'entities.tsv')
 rel_dict = gen_dict(rel_file)
 entity_dict = gen_dict(entity_file)
 
-print("rel_dict", rel_dict)
-print("entity_dict", entity_dict)
+# print("rel_dict", rel_dict)
+# print("entity_dict", entity_dict)
 
 tests = np.loadtxt(test_file, delimiter='\t', dtype=str)
 #heads = list(map(entity_dict.get, tests[:1, 0]))
