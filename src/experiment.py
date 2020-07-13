@@ -57,7 +57,9 @@ class Experiment():
                 sys.stdout.flush()
             
             (qq, hh, tt), mdb = next_fn()
+            print("next_fn finished ...")
             if mode == "train":
+                print("In the update() ...")
                 run_fn = self.learner.update
             else:
                 run_fn = self.learner.predict
