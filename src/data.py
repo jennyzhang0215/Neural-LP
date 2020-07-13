@@ -177,6 +177,8 @@ class Data(object):
         with open(self.relation_file) as f:
             for line in f:
                 l = line.strip().split()
+                if len(l) > 1:
+                    print(l)
                 assert(len(l) == 1)
                 relation_to_number[l[0]] = len(relation_to_number)
         
