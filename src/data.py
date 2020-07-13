@@ -355,8 +355,8 @@ class Data(object):
         if self.type_check:
             query = this_batch[0][0]
             matrix_db = self._subset_of_matrix_db(matrix_db, self.domains[query])
-        print(self._triplet_to_feed(this_batch))
-        print('matrix_db', matrix_db)
+        print('triplet_to_feed', self._triplet_to_feed(this_batch))
+        #print('matrix_db', matrix_db)
         return self._triplet_to_feed(this_batch), matrix_db
 
 
