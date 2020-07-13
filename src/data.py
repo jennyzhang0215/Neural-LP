@@ -60,6 +60,7 @@ class Data(object):
         self.num_relation = len(self.relation_to_number)
         self.num_query = self.num_relation * 2
         self.num_entity = len(self.entity_to_number)
+        print('#entity: {}, #relation: {}'.format(self.num_entity, self.num_relation))
 
         self.test_file = os.path.join(folder, "test.txt")
         self.train_file = os.path.join(folder, "train.txt")
@@ -101,7 +102,10 @@ class Data(object):
             self.matrix_db_train = self._db_to_matrix_db(self.train_facts)
             self.matrix_db_test = self._db_to_matrix_db(self.test_facts)
             self.matrix_db_valid = self._db_to_matrix_db(self.train_facts)
-        
+
+        print('#facts: {}, #train: {}, #valid: {}, #test: {}'.format(
+            len(self.facts), len(self.train), len(self.valid), len(self.test)))
+
         if self.type_check:
             self.domains_file = os.path.join(folder, "stats/domains.txt")
             self.domains = self._parse_domains_file(self.domains_file)
