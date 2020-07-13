@@ -177,7 +177,7 @@ class Data(object):
         idx = 0
         with open(self.relation_file) as f:
             for line in f:
-                l = line.strip().split()
+                l = line.strip().split('\t')
                 if len(l) > 1:
                     print(idx, line, l)
                 idx += 1
