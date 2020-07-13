@@ -52,6 +52,7 @@ class Experiment():
         epoch_loss = []
         epoch_in_top = []
         for batch in range(num_batch):
+            print(batch)
             if (batch+1) % max(1, (num_batch // self.option.print_per_batch)) == 0:
                 sys.stdout.write("%d/%d\t" % (batch+1, num_batch))
                 sys.stdout.flush()
@@ -110,11 +111,8 @@ class Experiment():
 
     def train(self):
         while (self.epoch < self.option.max_epoch and not self.early_stopped):
-            #print('In training ...')
             self.one_epoch_train()
-            #print('In validation ...')
             self.one_epoch_valid()
-            #print('In testing ...')
             self.one_epoch_test()
             self.epoch += 1
             model_path = self.saver.save(self.sess, self.option.model_path,
