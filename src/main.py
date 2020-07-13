@@ -39,7 +39,7 @@ def main():
     parser.add_argument('--query_is_language', default=False, action="store_true")
     parser.add_argument('--vocab_embed_size', default=128, type=int)
     # model architecture
-    parser.add_argument('--num_step', default=4, type=int)
+    parser.add_argument('--num_step', default=3, type=int)
     parser.add_argument('--num_layer', default=1, type=int)
     parser.add_argument('--rnn_state_size', default=128, type=int)
     parser.add_argument('--query_embed_size', default=128, type=int)
