@@ -185,9 +185,13 @@ class Data(object):
                 relation_to_number[l[0]] = len(relation_to_number)
         
         entity_to_number = {}
+        idx = 0
         with open(self.entity_file) as f:
             for line in f:
-                l = line.strip().split()
+                l = line.strip().split('\t')
+                if len(l) != 1:
+                    print(idx, line, l)
+                idx += 1
                 assert(len(l) == 1)
                 entity_to_number[l[0]] = len(entity_to_number)
         return relation_to_number, entity_to_number
