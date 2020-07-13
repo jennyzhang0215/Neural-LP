@@ -180,7 +180,7 @@ class Learner(object):
         self.optimizer_step = self.optimizer.apply_gradients(capped_gvs)
 
     def _run_graph(self, sess, qq, hh, tt, mdb, to_fetch):
-        print("In the run_graph() ...")
+        #print("In the run_graph() ...")
         feed = {}
         if not self.query_is_language:
             feed[self.queries] = [[q] * (self.num_step-1) + [self.num_query] # the <END> token is the last token
@@ -196,7 +196,7 @@ class Learner(object):
         fetches = to_fetch
         # print('feed', feed)
         graph_output = sess.run(fetches, feed)
-        print("graph_output", graph_output)
+        #print("graph_output", graph_output)
         return graph_output
 
     def update(self, sess, qq, hh, tt, mdb):

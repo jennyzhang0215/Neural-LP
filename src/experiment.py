@@ -57,9 +57,9 @@ class Experiment():
                 sys.stdout.flush()
             
             (qq, hh, tt), mdb = next_fn()
-            print("next_fn finished ...")
+            #print("next_fn finished ...")
             if mode == "train":
-                print("In the update() ...")
+                #print("In the update() ...")
                 run_fn = self.learner.update
             else:
                 run_fn = self.learner.predict
@@ -110,11 +110,11 @@ class Experiment():
 
     def train(self):
         while (self.epoch < self.option.max_epoch and not self.early_stopped):
-            print('In training ...')
+            #print('In training ...')
             self.one_epoch_train()
-            print('In validation ...')
+            #print('In validation ...')
             self.one_epoch_valid()
-            print('In testing ...')
+            #print('In testing ...')
             self.one_epoch_test()
             self.epoch += 1
             model_path = self.saver.save(self.sess, self.option.model_path,
