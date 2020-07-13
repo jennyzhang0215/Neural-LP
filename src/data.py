@@ -174,11 +174,13 @@ class Data(object):
     
     def _numerical_encode(self):
         relation_to_number = {}
+        idx = 0
         with open(self.relation_file) as f:
             for line in f:
                 l = line.strip().split()
                 if len(l) > 1:
-                    print(l)
+                    print(idx, line, l)
+                idx += 1
                 assert(len(l) == 1)
                 relation_to_number[l[0]] = len(relation_to_number)
         
