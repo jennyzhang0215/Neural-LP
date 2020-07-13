@@ -108,8 +108,11 @@ class Experiment():
 
     def train(self):
         while (self.epoch < self.option.max_epoch and not self.early_stopped):
+            print('In training ...')
             self.one_epoch_train()
+            print('In validation ...')
             self.one_epoch_valid()
+            print('In testing ...')
             self.one_epoch_test()
             self.epoch += 1
             model_path = self.saver.save(self.sess, self.option.model_path,
