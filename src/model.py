@@ -194,6 +194,7 @@ class Learner(object):
         for r in range(self.num_operator // 2):
             feed[self.database[r]] = tf.SparseTensorValue(*mdb[r]) 
         fetches = to_fetch
+        print('feed', feed)
         graph_output = sess.run(fetches, feed)
         return graph_output
 
