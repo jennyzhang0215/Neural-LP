@@ -123,12 +123,10 @@ class Learner(object):
         # Then tensor represents currently populated memory cells.
         self.memories = tf.expand_dims(tf.one_hot(indices=self.tails,
                                                   depth=self.num_entity), 1)
-        print("memories", self.memories)
 
         ## R matrices
         self.database = {r: tf.sparse_placeholder(dtype=tf.float32, name="database_%d" % r)
                          for r in range(self.num_operator // 2)}
-        print("database", self.database)
         for t in range(self.num_step):
             self.attention_memories.append(
                 tf.nn.softmax(tf.squeeze(tf.matmul(tf.expand_dims(self.rnn_outputs[t], 1),
@@ -198,6 +196,7 @@ class Learner(object):
         fetches = to_fetch
         # print('feed', feed)
         graph_output = sess.run(fetches, feed)
+        print("graph_output", graph_output)
         return graph_output
 
     def update(self, sess, qq, hh, tt, mdb):
