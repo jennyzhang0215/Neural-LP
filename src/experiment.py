@@ -52,7 +52,7 @@ class Experiment():
         epoch_loss = []
         epoch_in_top = []
         for batch in range(num_batch):
-            print(batch)
+            print('one train batch:' batch)
             if (batch+1) % max(1, (num_batch // self.option.print_per_batch)) == 0:
                 sys.stdout.write("%d/%d\t" % (batch+1, num_batch))
                 sys.stdout.flush()
