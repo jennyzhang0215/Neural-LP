@@ -1,9 +1,7 @@
-import numpy as np
-import json
 import os
 import pandas as pd
 
-data_name = 'fb15k-237'
+data_name = 'family'
 entities = pd.read_csv(os.path.join('..', 'datasets', data_name, 'entities.txt'), delimiter='\t')
 relations = pd.read_csv(os.path.join('..', 'datasets', data_name, 'relations.txt'), delimiter='\t')
 facts = pd.read_csv(os.path.join('..', 'datasets', data_name, 'facts.txt'), delimiter='\t')
