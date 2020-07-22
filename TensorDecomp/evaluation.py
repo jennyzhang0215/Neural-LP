@@ -85,7 +85,7 @@ for gt_h, r, t in tests.values:
         else:
             pred_l_all[idx].append(0)
 
-for idx, preds in pred_l_all:
+for idx, preds in enumerate(pred_l_all):
     print("hit@{}: {}".format(hit_thres[idx], sum(preds)/len(preds)))
 
 
