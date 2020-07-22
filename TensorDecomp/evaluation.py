@@ -67,8 +67,10 @@ for gt_h, r, t in tests.values:
     t_idx = tail_id2splattid_dict[entity2id_dict[t]]
     r_embed = rel_embeds[r_idx]
     t_embed = tail_embeds[t_idx]
-    scores = score(head_embeds, r_embed, tail_embeds)
-    scores[observed_rt2h_dict[(r,t)]] = float('-inf')
+    scores = score(head_embeds, r_embed, t_embed)
+    print('scores', scores)
+    if (r,t) in observed_rt2h_dict:
+        scores[observed_rt2h_dict[(r,t)]] = float('-inf')
     preds = np.argsort(scores)
     gt_h_idx = head_id2splattid_dict[entity2id_dict[gt_h]]
     print('gt_h_idx', gt_h_idx)
