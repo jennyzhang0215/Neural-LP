@@ -6,12 +6,12 @@ data_name = 'family'
 ### read data and the learned embeddings
 entities = pd.read_csv(os.path.join('..', 'datasets', data_name, 'entities.txt'),
                        delimiter='\t', names=['name'])
-entity2id_dict = {v['name']: idx for idx, v in entities.iterrows()}
-id2entity_dict = {idx: v['name'] for idx, v in entities.iterrows()}
+entity2id_dict = {v['name']: idx+1 for idx, v in entities.iterrows()}
+id2entity_dict = {idx+1: v['name'] for idx, v in entities.iterrows()}
 relations = pd.read_csv(os.path.join('..', 'datasets', data_name, 'relations.txt'),
                         delimiter='\t', names=['name'])
-rel2id_dict = {v['name']: idx for idx, v in relations.iterrows()}
-id2rel_dict = {idx: v['name'] for idx, v in relations.iterrows()}
+rel2id_dict = {v['name']: idx+1 for idx, v in relations.iterrows()}
+id2rel_dict = {idx+1: v['name'] for idx, v in relations.iterrows()}
 _facts = pd.read_csv(os.path.join('..', 'datasets', data_name, 'facts.txt'),
                      delimiter='\t', names=['h', 'r', 't'])
 _trains = pd.read_csv(os.path.join('..', 'datasets', data_name, 'train.txt'),
@@ -35,15 +35,11 @@ with open('mode2.map', 'r') as f_tail:
     for idx, line in enumerate(f_tail.readlines()):
         line = line.strip()
         tail_id2splattid_dict[int(line)] = idx
-
-## to check whether all the heads and tails appear in the splatt map
-
 ## generate observed heads given (r, tail)
 observed_rt2h_dict = {}
 for h,r,t in trains.values:
-
-    if entity2id_dict[h] not in head_id2splattid_dict:
-        continue
+    # if entity2id_dict[h] not in head_id2splattid_dict:
+    #     continue
     head_idx_in_splatt = head_id2splattid_dict[entity2id_dict[h]]
     if (r,t) in observed_rt2h_dict:
         observed_rt2h_dict[(r,t)].append(head_idx_in_splatt)
