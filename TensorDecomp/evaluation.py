@@ -70,16 +70,16 @@ for gt_h, r, t in tests.values:
     r_embed = rel_embeds[r_idx]
     t_embed = tail_embeds[t_idx]
     scores = score(head_embeds, r_embed, t_embed)
-    print('scores', scores)
+    #print('scores', scores)
     if (r,t) in observed_rt2h_dict:
         scores[observed_rt2h_dict[(r,t)]] = float('-inf')
-    preds = np.argsort(scores)
+    preds = np.argsort(scores)[::-1]
     if entity2id_dict[gt_h] not in head_id2splattid_dict:
         continue
     gt_h_idx = head_id2splattid_dict[entity2id_dict[gt_h]]
-    print('gt_h_idx', gt_h_idx)
+    #print('gt_h_idx', gt_h_idx)
     for idx, thres in enumerate(hit_thres):
-        print(thres, preds[:thres])
+        #print(thres, preds[:thres])
         if gt_h_idx in preds[:thres]:
             pred_l_all[idx].append(1)
         else:
