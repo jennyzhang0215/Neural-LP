@@ -63,7 +63,7 @@ def score(h,r,t):
 pred_l_all = [[],[],[],[]]
 hit_thres = [1,3,5,10]
 for gt_h, r, t in tests.values:
-    r_idx = rel2id_dict[r]
+    r_idx = rel2id_dict[r]-1
     t_idx = tail_id2splattid_dict[entity2id_dict[t]]
     r_embed = rel_embeds[r_idx]
     t_embed = tail_embeds[t_idx]
