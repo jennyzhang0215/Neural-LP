@@ -64,6 +64,8 @@ pred_l_all = [[],[],[],[]]
 hit_thres = [1,3,5,10]
 for gt_h, r, t in tests.values:
     r_idx = rel2id_dict[r]-1
+    if entity2id_dict[t] not in tail_id2splattid_dict:
+        continue
     t_idx = tail_id2splattid_dict[entity2id_dict[t]]
     r_embed = rel_embeds[r_idx]
     t_embed = tail_embeds[t_idx]
@@ -72,6 +74,8 @@ for gt_h, r, t in tests.values:
     if (r,t) in observed_rt2h_dict:
         scores[observed_rt2h_dict[(r,t)]] = float('-inf')
     preds = np.argsort(scores)
+    if entity2id_dict[gt_h] not in head_id2splattid_dict:
+        continue
     gt_h_idx = head_id2splattid_dict[entity2id_dict[gt_h]]
     print('gt_h_idx', gt_h_idx)
     for idx, thres in enumerate(hit_thres):
